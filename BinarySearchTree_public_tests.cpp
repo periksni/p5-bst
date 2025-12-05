@@ -40,6 +40,6 @@ TEST(bst_public_test) {
   cout << "inorder" << endl;
   cout << oss_inorder.str() << endl << endl;
   ASSERT_TRUE(oss_inorder.str() == "3 5 7 ");
-}
+} 
 
 TEST_MAIN()
