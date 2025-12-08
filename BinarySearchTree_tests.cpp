@@ -116,5 +116,90 @@ TEST(test_traversals) {
     ASSERT_EQUAL(uss_preorder.str(), "8 3 1 6 10 14 ");
 }
 
+TEST(test_copy_constructor) {
+    BinarySearchTree<int> birch; 
+    birch.insert(10);
+    birch.insert(5);
+    birch.insert(15);
+
+    BinarySearchTree<int> copy(birch);
+
+    ASSERT_FALSE(copy.empty());
+    ASSERT_EQUAL(copy.size(), 3);
+    ASSERT_TRUE(copy.find(10) != copy.end());
+    ASSERT_TRUE(copy.find(5) != copy.end());
+    ASSERT_TRUE(copy.find(15) != copy.end());
+
+    copy.insert(20);
+    copy.insert(3);
+
+    ASSERT_TRUE(copy.find(20) != copy.end());
+    ASSERT_TRUE(copy.find(3) != copy.end());
+
+    ASSERT_TRUE(birch.find(20) == birch.end());
+    ASSERT_TRUE(birch.find(3) == birch.end());
+}
+
+TEST(test_empty_constructor) {
+    BinarySearchTree<int> sadtree;
+    BinarySearchTree<int> copy(sadtree);
+
+    ASSERT_TRUE(copy.empty());
+    ASSERT_EQUAL(copy.size(),0);
+    ASSERT_TRUE(copy.begin() == copy.end());
+
+}
+
+TEST(test_copy_constructor_fellow) {
+    BinarySearchTree<int> spruce;
+    spruce.insert(10);
+    spruce.insert(5);
+    spruce.insert(15);
+    spruce.insert(2);
+    spruce.insert(7);
+
+    // Height of this BST is 3 if inserted in this order
+    ASSERT_EQUAL(spruce.height(), 3);
+    ASSERT_EQUAL(spruce.size(), 5);
+
+    BinarySearchTree<int> copy(spruce);
+
+    // Copy MUST have same size and height
+    ASSERT_EQUAL(copy.size(), 5);
+    ASSERT_EQUAL(copy.height(), 3);
+
+    // Modify the copy
+    copy.insert(20);
+    copy.insert(1);
+
+    // Now size must diverge
+    ASSERT_EQUAL(copy.size(), 7);
+    ASSERT_EQUAL(spruce.size(), 5);
+
+    // And heights also diverge
+    ASSERT_TRUE(copy.height() != spruce.height());
+}
+
+TEST(test_copy_constructor_right_side) {
+    BinarySearchTree<int> tea;
+
+    tea.insert(1);
+    tea.insert(2);
+    tea.insert(3);
+    tea.insert(4);
+    tea.insert(5);
+
+    BinarySearchTree<int> copy(tea);
+
+    // Check ALL values appear in copy
+    for (int i = 1; i <= 5; ++i) {
+        ASSERT_TRUE(copy.find(i) != copy.end());
+    }
+
+    // Sizes must match
+    ASSERT_EQUAL(tea.size(), copy.size());
+}
+
+
 
 TEST_MAIN()
