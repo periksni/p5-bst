@@ -333,6 +333,7 @@ private:
   // NOTE:    This function must run in constant time.
   //          No iteration or recursion is allowed.
   static bool empty_impl(const Node *node) {
+    // if the node doesn't point to nullptr, it's not empty
     if (node) {
       return false;
     }
@@ -344,9 +345,12 @@ private:
   //          tree is 0.
   // NOTE:    This function must be tree recursive.
   static int size_impl(const Node *node) {
+    // if tree empty, size = 0
     if (empty_impl(node)) {
       return 0;
     }
+    // otherwise its just the size of the left and right subtrees
+    // plus the current node
     else{
       return 1 + size_impl(node->left) + size_impl(node->right);
     }
@@ -357,12 +361,16 @@ private:
   //          The height of an empty tree is 0.
   // NOTE:    This function must be tree recursive.
   static int height_impl(const Node *node) {
+    // if tree empty, height is just zero (base case)
     if (!node) {
       return 0;
     }
+    // want to compare height of left and right side of node and use 
+    // the one that is greater
     int left_height = height_impl(node->left);
     int right_height = height_impl(node->right);  
-  
+    
+    // just return which side is greater plus the root node height (1)
     if (left_height > right_height) {
       return 1 + left_height;
     }
@@ -376,27 +384,39 @@ private:
   //          tree rooted at 'node'.
   // NOTE:    This function must be tree recursive.
   static Node *copy_nodes_impl(Node *node) {
+    // if the tree/subtree is empty then you're copying 
+    // an empty tree so just return null
     if (!node) {
       return nullptr;
     }
+    // need to copy both the left and right side so call and store
+    // in left and right nodes
     Node *left_node_fondler;
     left_node_fondler = copy_nodes_impl(node->left);
     Node *right_node_schmidla;
     right_node_schmidla = copy_nodes_impl(node->right);
+    
+    // need to make a new node with the original root node datum
+    // and set the left and right node to the return from recursion
     Node *newNode = new Node;
     newNode->datum = node->datum;
     newNode->left = left_node_fondler;
     newNode->right = right_node_schmidla;
+    // simply return the new root node and the tree is fully copied
     return newNode;
   }
 
   // EFFECTS: Frees the memory for all nodes used in the tree rooted at 'node'.
   // NOTE:    This function must be tree recursive.
   static void destroy_nodes_impl(Node *node) {
+    // nothing to destroy if the node points to null
     if (!node) {
       return;
     }
     
+    // use recursion to destroy left and right side
+    // want delete at the end so that we get to the final node and 
+    // then delete from there
     destroy_nodes_impl(node->left);
     destroy_nodes_impl(node->right);
     delete node;
@@ -415,13 +435,17 @@ private:
   //       Two elements A and B are equivalent if and only if A is
   //       not less than B and B is not less than A.
   static Node * find_impl(Node *node, const T &query, Compare less) {
+    // want to return null when node is null
     if (!node) {
       return nullptr;
     }
     
+    // if the current node equals the query then just return the node
     if (!less(node->datum, query) && !less(query, node->datum)) {
       return node;
     }
+    // otherwise choose to look on left or right side depending on
+    // comparison between node and query
     else if (less(node->datum, query)) {
       return find_impl(node->right, query, less);
     }
@@ -446,6 +470,9 @@ private:
   //       template, NOT according to the < operator. Use the "less"
   //       parameter to compare elements.
   static Node * insert_impl(Node *node, const T &item, Compare less) {
+    // when the tree/subtree is empty, we know to actually insert
+    // so create the node and have it point to null on left and right
+    // and return that node
     if (!node) {
       Node *newNode = new Node;
       newNode->datum = item;
@@ -454,6 +481,7 @@ private:
       return newNode;
     }
     
+    // need to use less to determine where to insert the node
     if (less(item, node->datum)) {
       node->left = insert_impl(node->left, item, less);
     }
@@ -471,12 +499,15 @@ private:
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the smallest element lives.
   static Node * min_element_impl(Node *node) {
+    // when at the end, just return null like spec says
     if (!(node)) {
       return nullptr;
     }
+    // when at the furthest left node, thats the min, return
     else if (!(node->left)) {
       return node;
     }
+    // want to keep searching the left side
     return min_element_impl(node->left);
   }
 
@@ -486,12 +517,15 @@ private:
   // HINT: You don't need to compare any elements! Think about the
   //       structure, and where the largest element lives.
   static Node * max_element_impl(Node *node) {
+    // when at the end just return nullptr
     if(!node) {
       return nullptr;
     }
+    // know at the right spot when the right is null (current is max)
     else if (!(node->right)) {
       return node;
     }
+    // keep looking to the right for max
     return max_element_impl(node->right);
   }
 
@@ -500,21 +534,28 @@ private:
   //          rooted at 'node'.
   // NOTE:    This function must be tree recursive.
   static bool check_sorting_invariant_impl(const Node *node, Compare less) {
+    // empty tree allowed
     if (!node) {
       return true;
     }
-   
+    
+    // check left side
     if (node->left) {
+      // if nodes to the left are greater than the previous node,
+      // return false
       if (!less(node->left->datum, node->datum)) {
         return false;
       }
     }
+    // right side
     if (node->right) {
+      // if nodes to the right are greater than the previous node,
+      // return false
       if (!less(node->datum, node->right->datum)) {
         return false;
       }
     }
-    
+    // check each node for left and right side
     return check_sorting_invariant_impl(node->left, less) and 
            check_sorting_invariant_impl(node->right, less);
   }
@@ -528,14 +569,19 @@ private:
   //       See https://en.wikipedia.org/wiki/Tree_traversal#In-order
   //       for the definition of a in-order traversal.
   static void traverse_inorder_impl(const Node *node, std::ostream &os) {
+    // When at end or empty, just return, nothing else to print
     if (!node) {
       return;
     }
+    // need to get to the left side
     traverse_inorder_impl(node->left, os);
-
+    // print node on the left, then it will print the node above the left
     os << node->datum << " ";
-
+    // then it goes to the right of that root node and prints that
     traverse_inorder_impl(node->right, os);
+
+    // Idea is we are at 1 root node. Then go left, print that, print current
+    // , then print right. Tricky to get in code but simple idea
   }
 
   // EFFECTS : Traverses the tree rooted at 'node' using a pre-order traversal,
@@ -547,11 +593,15 @@ private:
   //       See https://en.wikipedia.org/wiki/Tree_traversal#Pre-order
   //       for the definition of a pre-order traversal.
   static void traverse_preorder_impl(const Node *node, std::ostream &os) {
+    // when at end or empty nothing else to print
     if (!node) {
       return;
     }
+    // print current node
     os << node->datum << " ";
+    // then want to print left node all the way down
     traverse_preorder_impl(node->left, os);
+    // then print the right of root after all lefts have been printed
     traverse_preorder_impl(node->right, os);
   }
 
@@ -567,19 +617,26 @@ private:
   //       'less' parameter). Based on the result, you gain some information
   //       about where the element you're looking for could be.
   static Node * min_greater_than_impl(Node *node, const T &val, Compare less) {
+    // When at end or empty, return that node
     if (!node) {
       return node;
     }
-      
+    
+    // if current node greater than val, want to check left
     if (less(val, node->datum)) {
+      // keep going until reach the point where the left node is less than val
       Node *left = min_greater_than_impl(node->left, val, less);
+      // if it actually exists
       if(left) {
         return left;
       }
+      // if doesn't exist then previous was min
       else {
         return node;
       }
     }
+    // if left doesnt work out, check the right side and see if there's
+    // something closer
     else {
       return min_greater_than_impl(node->right, val, less);
     }
