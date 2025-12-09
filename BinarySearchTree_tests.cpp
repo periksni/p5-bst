@@ -3,6 +3,7 @@
 
 
 TEST(test_empty_tree) {
+    //checks empty tree
     BinarySearchTree<int> tree;
     ASSERT_TRUE(tree.empty());
     ASSERT_EQUAL(tree.height(), 0);
@@ -20,22 +21,22 @@ TEST(test_insert_bomboclat) {
     christmas.insert(5);
     christmas.insert(3);
     christmas.insert(4);
-
+    //checks tree parameters
     ASSERT_FALSE(christmas.empty());
     ASSERT_EQUAL(christmas.size(), 4);
     ASSERT_EQUAL(christmas.height(), 4)
-    
+    //finds if all points are in tree
     ASSERT_TRUE(christmas.find(10) != christmas.end());
     ASSERT_TRUE(christmas.find(5) != christmas.end());
     ASSERT_TRUE(christmas.find(3) != christmas.end());
-
+    //checks min and max element functions
     ASSERT_EQUAL(*christmas.min_element(), 3);
     ASSERT_EQUAL(*christmas.max_element(), 10);
 }
 
 TEST(test_sorting_invariant_when_correct) {
     BinarySearchTree<int> pine;
-
+    //checks sorting invarinant correctly
     pine.insert(20);
     pine.insert(10);
     pine.insert(30);
@@ -48,6 +49,7 @@ TEST(test_sorting_invariant_when_correct) {
 TEST(test_sorting_invariant_invalid_tree) {
     BinarySearchTree<int> oak;
 
+    //checks sorting invariant
     oak.insert(10);
     oak.insert(5);
     oak.insert(20);
@@ -58,6 +60,7 @@ TEST(test_sorting_invariant_invalid_tree) {
 }
 
 TEST(test_sorting_invariant_sucks) {
+    //testing sorting invariant
     BinarySearchTree<int> maple;
     maple.insert(10);
     maple.insert(5);
@@ -67,7 +70,7 @@ TEST(test_sorting_invariant_sucks) {
     auto it = maple.begin();
     ++it;
     ++it;
-
+    //changes to 9
     *it = 9;
 
     ASSERT_FALSE(maple.check_sorting_invariant());
@@ -80,6 +83,7 @@ TEST(test_min_greater_than_edgerallenpoe) {
     tree.insert(15);
     tree.insert(12);
 
+    //test edge cases for min_greater than
     auto it_h = tree.min_greater_than(1);
     ASSERT_TRUE(it_h != tree.end());
     ASSERT_EQUAL(*it_h, 5);
@@ -105,14 +109,16 @@ TEST(test_traversals) {
     tree.insert(6);
     tree.insert(14);
     
+    //checks in order traversal
     std::ostringstream uss_inorder;
     tree.traverse_inorder(uss_inorder);
-    // Should be : 1 3 6 8 10 14 
+
     ASSERT_EQUAL(uss_inorder.str(), "1 3 6 8 10 14 ");
     
+    //checks preordar traversal
     std::ostringstream uss_preorder;
     tree.traverse_preorder(uss_preorder);
-    // Should be : 8 3 1 6 10 14
+    
     ASSERT_EQUAL(uss_preorder.str(), "8 3 1 6 10 14 ");
 }
 
@@ -124,12 +130,14 @@ TEST(test_copy_constructor) {
 
     BinarySearchTree<int> copy(birch);
 
+    //checks its not empty and values are present
     ASSERT_FALSE(copy.empty());
     ASSERT_EQUAL(copy.size(), 3);
     ASSERT_TRUE(copy.find(10) != copy.end());
     ASSERT_TRUE(copy.find(5) != copy.end());
     ASSERT_TRUE(copy.find(15) != copy.end());
 
+    //checks if it is correctly inserted
     copy.insert(20);
     copy.insert(3);
 
@@ -141,9 +149,11 @@ TEST(test_copy_constructor) {
 }
 
 TEST(test_empty_constructor) {
+    //checks empty constructor
     BinarySearchTree<int> sadtree;
     BinarySearchTree<int> copy(sadtree);
-
+    //makes sure that its truly 100% 
+    //difinitively superliciously empty
     ASSERT_TRUE(copy.empty());
     ASSERT_EQUAL(copy.size(),0);
     ASSERT_TRUE(copy.begin() == copy.end());
@@ -191,7 +201,7 @@ TEST(test_copy_constructor_right_side) {
 
     BinarySearchTree<int> copy(tea);
 
-    // Check ALL values appear in copy
+    // Check all values appear in copy
     for (int i = 1; i <= 5; ++i) {
         ASSERT_TRUE(copy.find(i) != copy.end());
     }

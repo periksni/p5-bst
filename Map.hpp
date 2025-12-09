@@ -33,6 +33,7 @@ private:
   // A custom comparator
   class PairComp {
     public: 
+    // () operator with a pair 
     bool operator()(const Pair_type &pair1, const Pair_type &pair2) const {
       return Key_compare()(pair1.first, pair2.first);
     }
@@ -66,12 +67,14 @@ public:
 
   // EFFECTS : Returns whether this Map is empty.
   bool empty() const {
+    // calls bst empty
     return bst.empty();
   }
 
   // EFFECTS : Returns the number of elements in this Map.
   // NOTE : size_t is an integral type from the STL
   size_t size() const {
+    //calls bst size
     return bst.size();
   }
 
@@ -83,6 +86,7 @@ public:
   //       (key, value) pairs, you'll need to construct a dummy value
   //       using "Value_type()".
   Iterator find(const Key_type& k) const {
+    //calls bst find, with k and value_type as a parameter
     return bst.find({k, Value_type()});
   }
 
@@ -103,10 +107,13 @@ public:
   //
   // HINT: http://www.cplusplus.com/reference/map/map/operator[]/
   Value_type& operator[](const Key_type& k) {
+    // if k isn't found, it would be at a nullptr
     if (this->find(k) == end()) {
+      //inserts k
       return insert({k, Value_type()}).first->second;
       
     } 
+    // else returns the value at k
     else {
       return find(k)->second;
     }
@@ -121,10 +128,14 @@ public:
   //           an iterator to the newly inserted element, along with
   //           the value true.
   std::pair<Iterator, bool> insert(const Pair_type &val) {
+    //create an interator and find 
+    //if the element is in the tree
     auto it = find(val.first);
+    //if it not at the end, it means that it was in the tree
     if (it != end()) {
       return {it, false};
     }
+    //else, insert the value in the tree and return true
     else {
       return {bst.insert(val), true};
     }
@@ -132,11 +143,13 @@ public:
 
   // EFFECTS : Returns an iterator to the first key-value pair in this Map.
   Iterator begin() const {
+    //calls bst begin
     return bst.begin();
   }
 
   // EFFECTS : Returns an iterator to "past-the-end".
   Iterator end() const {
+    //calls bst end
     return bst.end();
   }
 
